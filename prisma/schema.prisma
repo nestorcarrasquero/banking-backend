@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String   @id @default(cuid())
+  username           String   @unique
+  password           String
+  fechaCreacion      DateTime @default(now())
+  fechaActualizacion DateTime @updatedAt
+}
+
+model Moneda {
+  id                 String         @id @default(cuid())
+  nombre             String         @unique
+  simbolo            String         @unique
+  codigoISO          String         @unique
+  pais               String
+  activo             Boolean        @default(true)
+  fechaCreacion      DateTime       @default(now())
+  fechaActualizacion DateTime       @updatedAt
+  criptomonedas      Criptomoneda[] @relation("MonedaToCriptomoneda")
+}
+
+model Criptomoneda {
+  id                 String   @id @default(cuid())
+  nombre             String   @unique
+  simbolo            String   @unique
+  descripcion        String
+  algoritmo          String?
+  website            String?
+  activo             Boolean  @default(true)
+  fechaCreacion      DateTime @default(now())
+  fechaActualizacion DateTime @updatedAt
+  monedas            Moneda[] @relation("MonedaToCriptomoneda")
+}
+
+model HistoricoMoneda {
+  id                 Int   @id @default(autoincrement())
+  idOriginal         String
+  nombre             String
+  simbolo            String
+  codigoISO          String
+  pais               String
+  activo             Boolean
+  fechaCreacion      DateTime
+  fechaActualizacion DateTime
+  fechaHistorico     DateTime @default(now())
+}
+
+model HistoricoCriptomoneda {
+  id                 Int   @id @default(autoincrement())
+  idOriginal         String
+  nombre             String
+  simbolo            String
+  descripcion        String
+  algoritmo          String?
+  website            String?
+  activo             Boolean
+  fechaCreacion      DateTime
+  fechaActualizacion DateTime
+  fechaHistorico     DateTime @default(now())
+}
